@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import UserCard from './components/user-card';
+import UserCard from './components/user-cards';
+import UserForm from './components/user-form';
 import api from './services/api';
 
 function App() {
 
-  const [latitude, setLatitude] = useState('');
+  const [latitude, setLatitude] = useState(''); //useState = usado para alterar estado da função
   const [longitude, setLongitude] = useState('');
   const [technologies, setTechnologies] = useState('');
   const [github_user, setGithubUser] = useState('');
+  const [devs, setDevs] = useState([]);
 
-  useEffect(() =>{
+  useEffect(() =>{ //useEffect = usado para funções executadas uma única vez na renderização da tela
     navigator.geolocation.getCurrentPosition(
       (position) =>{
         const {latitude, longitude} = position.coords;
@@ -25,16 +27,17 @@ function App() {
     )
   }, []);
 
-  async function handleSubmit(e){
-    e.preventDefault();
-    const response = await api.post('/devs',{
-      github_user,
-      technologies,
-      latitude,
-      longitude,
-    })
+  useEffect(() =>{
+    async function loadDevs(){
+      const response = await api.get('/devs');
+      setDevs(response.data);
+    }
+    loadDevs();
+  }, []);
 
-    console.log(response.data);
+  async function handleSubmit(data){
+    const response = await api.post('/devs', data);
+    setDevs([...devs, response.data]);
   }
 
   return (
@@ -45,21 +48,15 @@ function App() {
             <div className="card">
               <div className="card-body">
                 <h2 className="text-center mb-3">Cadastrar</h2>
-                <form onSubmit={handleSubmit}>
-                  <input className="form-control mb-3" placeholder="Usuário do Github" onChange={e => setGithubUser(e.target.value)}/>
-                  <input className="form-control mb-3" placeholder="Tecnologias (separadas por vírgula)" onChange={e => setTechnologies(e.target.value)}/>
-                  <div className="d-flex justify-content-between">
-                  <input className="form-control mb-3 mr-3" type="number" placeholder="Latitude" value={latitude} onChange={e => setLatitude(e.target.value)} />
-                  <input className="form-control mb-3"  type="number" placeholder="Longitude" value={longitude} onChange={e => setLongitude(e.target.value)}/>
-                  </div>
-                  <button className="btn btn-primary btn-block btn-lg">Salvar</button>
-                </form>
+                <UserForm onSubmit={handleSubmit} />
               </div>
             </div>
           </div>
           <div className="col-md-8">
             <div className="row mt-3 mt-md-0 ">
-              <UserCard />
+              {devs.map( dev =>(
+                <UserCard key={dev._id} dev={dev}/>
+              ))}
             </div>
           </div>
         </div>
