@@ -7,6 +7,7 @@ module.exports = {
     //INDEX SHOW STORE UPDATE DESTROY
 
     async store (req, res){ //async = função que pode demorar a responder
+
         const {github_user, technologies, latitude, longitude} = req.body;
 
         let dev = await Dev.findOne({github_user});
@@ -16,7 +17,7 @@ module.exports = {
             const {name = login, avatar_url, bio} = response.data;
 
             const techs = stringToArray(technologies);
-        
+
             const location = {
                 type: 'Point',
                 coordinates: [longitude, latitude]
