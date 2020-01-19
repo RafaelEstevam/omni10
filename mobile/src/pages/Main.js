@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 
 import api from '../services/api';
+import {connect, disconnect, subscribeToNewDevs} from '../services/socket';
 
 function Main({ navigation }) {
 
@@ -30,9 +31,26 @@ function Main({ navigation }) {
         }
 
         getCurrentLocation();
+
     }, []);
 
-    async function loadDevs() {
+    useEffect(() => {
+        subscribeToNewDevs(dev => setDevs([...devs, dev]));
+    }, [devs])//dispara função quando variavel mudar de valor
+
+    function setupWebsocket(){
+        disconnect();
+
+        const {latitude, longitude} = currentRegion;
+
+        connect(
+            latitude,
+            longitude,
+            technologies
+        );
+    }
+
+    async function loadDevs() {//carrega usuários de acordo com a busca
         const {latitude, longitude} = currentRegion;
 
         const response = await api.get('/search', {
@@ -44,6 +62,7 @@ function Main({ navigation }) {
         });
 
         setDevs(response.data.devs);
+        setupWebsocket();
     }
 
     function handleRegionChanged(region) {
