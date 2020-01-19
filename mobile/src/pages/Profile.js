@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import {WebView} from 'react-native-webview';
 
-function Main() {
-    return(
-        <View>
-            <Text>Profile</Text>
-        </View>
-    )
+function Profile({navigation}) {
+    const githubUsername = navigation.getParam('github_username');
+    console.log(githubUsername);
+    return <WebView style={{flex: 1}} source={{uri: `https://github.com/${githubUsername}`}} />
 }
 
-export default Main;
+export default Profile;
