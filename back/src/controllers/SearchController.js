@@ -4,6 +4,9 @@ const stringToArray = require("../utils/stringToArray");
 module.exports = {
     async index(req, res){
         const {longitude, latitude, technologies, range} = req.query;
+
+        console.log(range, longitude, latitude, technologies);
+        
         const techs = stringToArray(technologies);
 
         const devs = await Dev.find({

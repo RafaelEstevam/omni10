@@ -14,6 +14,7 @@ function Main({ navigation }) {
     const [currentRegion, setCurrentRegion] = useState(null);
     const [technologies, setTechnologies] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [range, setRange] = useState(10);
 
     useEffect(() =>{
         async function getCurrentLocation(){
@@ -50,14 +51,15 @@ function Main({ navigation }) {
         );
     }
 
-    async function loadDevs(distance) {//carrega usuários de acordo com a busca
+    async function loadDevs(range) {//carrega usuários de acordo com a busca
+        range = range * 1000;
         const {latitude, longitude} = currentRegion;
         const response = await api.get('/search', {
             params: {
                 latitude,
                 longitude,
                 technologies,
-                distance
+                range
             }
         });
         setDevs(response.data.devs);
@@ -78,11 +80,51 @@ function Main({ navigation }) {
 
     return(
         <>
+            <View style={{
+                height: 20,
+                width: 20,
+                borderRadius: 30,
+                backgroundColor: "#000",
+                justifyContent: "center",
+                alignItems: "center",
+                position: 'absolute',
+                zIndex: 10,
+                left: '47.7%',
+                top: '47.4%'
+            }}>
+                <View style={{
+                    height: 10,
+                    width: 10,
+                    borderRadius: 30,
+                    backgroundColor: "#fff"
+                }}>
+                    
+                </View>
+            </View>
             <MapView 
                 style={styles.map}
                 initialRegion={currentRegion} //passar posição atual do GPS
                 onRegionChangeComplete={handleRegionChanged}
             >
+                {/* <Marker coordinate={{latitude: currentRegion.latitude, longitude: currentRegion.longitude}}>
+                    <View style={{
+                        height: 20,
+                        width: 20,
+                        borderRadius: 30,
+                        backgroundColor: "#c00",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}>
+                        <View style={{
+                            height: 10,
+                            width: 10,
+                            borderRadius: 30,
+                            backgroundColor: "#fff"
+                        }}>
+                            
+                        </View>
+                    </View>
+                </Marker> */}
                 {devs.map(dev => (
                     <Marker 
                         key={dev._id}
