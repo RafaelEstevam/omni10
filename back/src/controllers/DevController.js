@@ -6,7 +6,6 @@ const { findConnections, sendMessage } = require("../websocket");
 module.exports = {
 
     //INDEX SHOW STORE UPDATE DESTROY
-
     async store (req, res){ //async = função que pode demorar a responder
 
         const {github_user, technologies, latitude, longitude} = req.body;

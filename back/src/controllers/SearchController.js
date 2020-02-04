@@ -3,7 +3,7 @@ const stringToArray = require("../utils/stringToArray");
 
 module.exports = {
     async index(req, res){
-        const {longitude, latitude, technologies} = req.query;
+        const {longitude, latitude, technologies, range} = req.query;
         const techs = stringToArray(technologies);
 
         const devs = await Dev.find({
@@ -16,7 +16,7 @@ module.exports = {
                         type: 'Point',
                         coordinates: [longitude, latitude],
                     },
-                    $maxDistance: 10000,
+                    $maxDistance: range,
                 },
             },
         });
